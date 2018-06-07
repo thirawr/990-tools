@@ -17,7 +17,7 @@ class Field_Metadata(Efile_Metadata):
     xpath = models.CharField(max_length=510, null=False)
     irs_type = models.CharField(max_length=255, null=False)
     db_type = models.CharField(max_length=255, null=False)
-    line_number = models.IntegerField(max_length=255, null=False)
+    line_number = models.IntegerField(null=False)
     description = models.TextField(null=False)
     versions = models.CharField(max_length=255, null=False)
 
