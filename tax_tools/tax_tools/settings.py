@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'core',
     'efile_export'
 ]
 
@@ -48,6 +49,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'tax_tools.urls'
+
+DATABASE_ROUTERS = ['core.router.Core_Router']
 
 TEMPLATES = [
     {
