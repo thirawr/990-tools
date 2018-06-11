@@ -5,7 +5,7 @@ from django.db import models
 class Efile_Metadata(models.Model):
     parent_sked = models.CharField(max_length=255, null=False)
     parent_sked_part = models.CharField(max_length=255, null=False)
-    ordering = models.IntegerField(null=False)
+    ordering = models.FloatField(null=False)
 
     class Meta:
         abstract = True
@@ -16,9 +16,9 @@ class Field_Metadata(Efile_Metadata):
     db_table = models.CharField(max_length=255, null=False)
     db_name = models.CharField(max_length=255, null=False)
     xpath = models.CharField(max_length=510, null=False)
-    irs_type = models.CharField(max_length=255, null=False)
+    irs_type = models.CharField(max_length=255, null=True)
     db_type = models.CharField(max_length=255, null=False)
-    line_number = models.IntegerField(null=False)
+    line_number = models.CharField(null=True, max_length=155)
     description = models.TextField(null=False)
     versions = models.CharField(max_length=255, null=False)
 
