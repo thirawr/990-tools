@@ -1,0 +1,3 @@
+[submodule "990-xml-metadata"]
+	path = 990-xml-metadata
+	url = git@github.com:chrondata/990-xml-metadata.git
