@@ -42,6 +42,8 @@ class Command(BaseCommand):
             description = row['description']
             versions = row['versions']
 
+            attribute_name = db_name.lower()
+
             print('Processing field {xpath}'.format(xpath=xpath))
 
             field = Field_Metadata(
@@ -51,6 +53,7 @@ class Command(BaseCommand):
                 in_a_group=in_a_group,
                 db_table=db_table,
                 db_name=db_name,
+                attribute_name=attribute_name,
                 xpath=xpath,
                 irs_type=irs_type,
                 db_type=db_type,

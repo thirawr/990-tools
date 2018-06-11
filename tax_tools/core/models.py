@@ -15,6 +15,7 @@ class Field_Metadata(Efile_Metadata):
     in_a_group = models.BooleanField(null=False)
     db_table = models.CharField(max_length=255, null=False)
     db_name = models.CharField(max_length=255, null=False)
+    attribute_name = models.CharField(max_length=255, null=False)
     xpath = models.CharField(max_length=510, null=False)
     irs_type = models.CharField(max_length=255, null=True)
     db_type = models.CharField(max_length=255, null=False)
