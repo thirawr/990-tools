@@ -10,20 +10,15 @@ from core.models import Organization
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         sql = '''
-            CREATE VIEW core_organization AS (
-                select
-                    id,
-                    ein,
-                    taxpayer_name
-                FROM
-                    990s.filing_filing
-                WHERE id in (
-                    SELECT
-                        MAX(id)
-                    FROM 990s.filing_filing
-                    GROUP BY ein
-                )
-            );
+        CREATE TABLE core_organization AS
+          (SELECT `990s`.`filing_filing`.`id` AS `id`,
+                  `990s`.`filing_filing`.`ein` AS `ein`,
+                  `990s`.`filing_filing`.`taxpayer_name` AS `taxpayer_name`
+           FROM `990s`.`filing_filing`
+           WHERE `990s`.`filing_filing`.`id` IN
+               (SELECT max(`990s`.`filing_filing`.`id`)
+                FROM `990s`.`filing_filing`
+                GROUP BY `990s`.`filing_filing`.`ein`))
         '''
 
         Organization.objects.raw('DROP TABLE core_organization;')

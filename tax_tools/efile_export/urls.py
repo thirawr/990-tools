@@ -13,16 +13,11 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.conf import settings
 from django.contrib import admin
-from django.urls import path, include
-from efile_export import urls as export_urls
+from django.urls import path
+from efile_export.views import home, OrgNameAutocomplete
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('export/', include('efile_export.urls'))
+    path('', home, name='export_home'),
+    path('org-autocomplete/', OrgNameAutocomplete.as_view(), name='org-autocomplete'),
 ]
-
-if settings.DEBUG:
-    import debug_toolbar
-    urlpatterns = [path('__debug__/', include(debug_toolbar.urls))] + urlpatterns

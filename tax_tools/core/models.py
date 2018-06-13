@@ -38,9 +38,12 @@ class Schedule_Part_Metadata(Efile_Metadata):
 class Organization(models.Model):
     '''This model represents a MySQL View that pulls the most recent taxpayer
     name for each EIN from FilingFiling'''
-    id = models.IntegerField(primary_key=True, null=False))
+    id = models.IntegerField(primary_key=True, null=False)
     ein = models.CharField(max_length=31, null=False)
     taxpayer_name = models.CharField(max_length=255, blank=False, null=False)
+
+    def __str__(self):
+        return self.taxpayer_name
 
     class Meta:
         managed = False
