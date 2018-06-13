@@ -1,5 +1,6 @@
 from django.db import models
 
+
 # lets keep the core 990-centric models here
 '''MANAGED METADATA MODELS'''
 class Efile_Metadata(models.Model):
@@ -33,6 +34,16 @@ class Schedule_Part_Metadata(Efile_Metadata):
     xml_root = models.CharField(max_length=255, null=False)
     is_shell = models.BooleanField(null=False)
 
+'''UNMANAGED APP-CREATED MODELS'''
+class Organization(models.Model):
+    '''This model represents a MySQL View that pulls the most recent taxpayer
+    name for each EIN from FilingFiling'''
+    ein = models.CharField(max_length=31, null=False)
+    taxpayer_name = models.CharField(max_length=255, blank=False, null=False)
+
+    class Meta:
+        managed = False
+        db_table = 'core_organization'
 
 '''
 UNMANAGED 990 XML DATABASE MODELS
@@ -60,6 +71,9 @@ class FilingFiling(models.Model):
     is_error = models.IntegerField(blank=True, null=True)
     key_error_count = models.IntegerField(blank=True, null=True)
     error_details = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.taxpayer_name
 
     class Meta:
         managed = False
