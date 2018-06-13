@@ -12,6 +12,7 @@ class Command(BaseCommand):
         sql = '''
             CREATE VIEW core_organization AS (
                 select
+                    id,
                     ein,
                     taxpayer_name
                 FROM
