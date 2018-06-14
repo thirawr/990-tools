@@ -15,9 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from efile_export.views import home, OrgNameAutocomplete
+from efile_export.views import Home, OrgNameAutocomplete, org_form
 
 urlpatterns = [
-    path('', home, name='export_home'),
+    path('', Home.as_view(), name='export_home'),
+    path('org-form', org_form, name='org-form'),
     path('org-autocomplete/', OrgNameAutocomplete.as_view(), name='org-autocomplete'),
 ]

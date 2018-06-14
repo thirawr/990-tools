@@ -2,11 +2,19 @@ from django.shortcuts import render
 from dal import autocomplete
 from efile_export.forms import OrganizationForm
 from core.models import Organization
-from django.views import generic
+from django.views.generic import TemplateView
 from django.urls import reverse_lazy
 
 # Create your views here.
-def home(request):
+# def home(request):
+#     return render(request, 'efile_export/test.html', {'form': form})
+
+
+class Home(TemplateView):
+    template_name = 'efile_export/home.html'
+
+
+def org_form(request):
     if request.method == 'POST':
         print(request.POST)
         print(OrganizationForm(request.POST))
@@ -16,7 +24,6 @@ def home(request):
     print('renderin')
 
     return render(request, 'efile_export/test.html', {'form': form})
-
 
 # class UpdateView(generic.UpdateView):
 #     model = Organization
