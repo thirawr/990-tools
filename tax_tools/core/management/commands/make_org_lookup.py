@@ -11,8 +11,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         sql = '''
         CREATE TABLE core_organization AS
-          (SELECT `990s`.`filing_filing`.`id` AS `id`,
-                  `990s`.`filing_filing`.`ein` AS `ein`,
+          (SELECT `990s`.`filing_filing`.`ein` AS `ein`,
                   `990s`.`filing_filing`.`taxpayer_name` AS `taxpayer_name`
            FROM `990s`.`filing_filing`
            WHERE `990s`.`filing_filing`.`id` IN
