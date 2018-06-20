@@ -4,7 +4,7 @@
 {% block content %}
   <h1>hi</h1>
   <div>
-    <form action="{% url 'export_home' %}" method="post">
+    <form action="{% url 'field-form' %}" method="post">
       {% csrf_token %}
       {{ form.as_p }}
       <input type='submit' />

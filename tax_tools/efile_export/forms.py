@@ -15,7 +15,10 @@ class OrganizationForm(forms.ModelForm):
         model = Organization
         fields = ('taxpayer_name',)
         widgets = {
-            'taxpayer_name': autocomplete.ListSelect2(url='org-autocomplete')
+            'taxpayer_name': autocomplete.Select2Multiple(url='org-autocomplete')
+        }
+        labels = {
+            'taxpayer_name': ('Taxpayer'),
         }
 
     # def __init__(self, *args, **kwargs):
