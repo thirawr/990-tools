@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from core.models import Field_Metadata, Schedule_Part_Metadata
+from core.models import Field_Metadata, Schedule_Part_Metadata, Schedule_Metadata
 from tax_tools.settings import XML_METADATA_DIR
 from ast import literal_eval
 import csv
@@ -28,9 +28,38 @@ class Command(BaseCommand):
         Field_Metadata.objects.all().delete()
         Schedule_Part_Metadata.objects.all().delete()
 
+        for row in schedule_parts_rows:
+            parent_sked_name = row['parent_sked']
+            try:
+                parent_sked = Schedule_Metadata.objects.get(name=parent_sked_name)
+            except Schedule_Metadata.DoesNotExist:
+                parent_sked = Schedule_Metadata(name=parent_sked_name)
+                parent_sked.save()
+            part_key = row['parent_sked_part']
+            ordering = row['ordering']
+            part_name = row['part_name']
+            xml_root = row['xml_root']
+            is_shell = literal_eval(row['is_shell'].title())
+
+            print('Processing sked part {xml_root}'.format(xml_root=xml_root))
+
+            sked_part = Schedule_Part_Metadata(
+                parent_sked=parent_sked,
+                part_key=part_key,
+                ordering=ordering,
+                part_name=part_name,
+                xml_root=xml_root,
+                is_shell=is_shell
+            )
+
+            sked_part.save()
+
+
         for row in variables_rows:
-            parent_sked = row['parent_sked']
-            parent_sked_part = row['parent_sked_part']
+            parent_sked_name = row['parent_sked']
+            parent_sked = Schedule_Metadata.objects.get(name=parent_sked_name)
+            parent_sked_part_key = row['parent_sked_part']
+            parent_sked_part = Schedule_Part_Metadata.objects.get(part_key=parent_sked_part_key)
             ordering = row['ordering']
             in_a_group = literal_eval(row['in_a_group'].title())
             db_table = row['db_table']
@@ -64,25 +93,5 @@ class Command(BaseCommand):
 
             field.save()
 
-        for row in schedule_parts_rows:
-            parent_sked = row['parent_sked']
-            parent_sked_part = row['parent_sked_part']
-            ordering = row['ordering']
-            part_name = row['part_name']
-            xml_root = row['xml_root']
-            is_shell = literal_eval(row['is_shell'].title())
-
-            print('Processing sked part {xml_root}'.format(xml_root=xml_root))
-
-            sked_part = Schedule_Part_Metadata(
-                parent_sked=parent_sked,
-                parent_sked_part=parent_sked_part,
-                ordering=ordering,
-                part_name=part_name,
-                xml_root=xml_root,
-                is_shell=is_shell
-            )
-
-            sked_part.save()
 
         print('done!')

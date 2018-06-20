@@ -12,7 +12,7 @@ class Efile_Metadata(models.Model):
         abstract = True
 
 
-class Schedule_Metadata(Efile_Metadata):
+class Schedule_Metadata(models.Model):
     name = models.CharField("parent schedule name", max_length=255, null=False)
 
 
@@ -22,6 +22,7 @@ class Schedule_Part_Metadata(Efile_Metadata):
         max_length=255,
         null=False
     )
+    part_key = models.CharField('schedule part key', max_length=255, null=False)
     parent_sked = models.ForeignKey(Schedule_Metadata, on_delete=models.CASCADE)
     xml_root = models.CharField(max_length=255, null=False)
     is_shell = models.BooleanField(null=False)
