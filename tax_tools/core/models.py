@@ -4,12 +4,27 @@ from django.db import models
 # lets keep the core 990-centric models here
 '''MANAGED METADATA MODELS'''
 class Efile_Metadata(models.Model):
-    parent_sked = models.CharField(max_length=255, null=False)
-    parent_sked_part = models.CharField(max_length=255, null=False)
+    # parent_sked = models.CharField(max_length=255, null=False)
+    # parent_sked_part = models.CharField(max_length=255, null=False)
     ordering = models.FloatField(null=False)
 
     class Meta:
         abstract = True
+
+
+class Schedule_Metadata(Efile_Metadata):
+    name = models.CharField("parent schedule name", max_length=255, null=False)
+
+
+class Schedule_Part_Metadata(Efile_Metadata):
+    part_name = models.CharField(
+        "verbose schedule part name",
+        max_length=255,
+        null=False
+    )
+    parent_sked = models.ForeignKey(Schedule_Metadata, on_delete=models.CASCADE)
+    xml_root = models.CharField(max_length=255, null=False)
+    is_shell = models.BooleanField(null=False)
 
 
 class Field_Metadata(Efile_Metadata):
@@ -23,21 +38,13 @@ class Field_Metadata(Efile_Metadata):
     line_number = models.CharField(null=True, max_length=155)
     description = models.TextField(null=False)
     versions = models.CharField(max_length=255, null=False)
+    parent_sked = models.ForeignKey(Schedule_Metadata, on_delete=models.CASCADE)
+    parent_sked_part = models.ForeignKey(Schedule_Part_Metadata, on_delete=models.CASCADE)
 
-
-class Schedule_Part_Metadata(Efile_Metadata):
-    part_name = models.CharField(
-        "verbose schedule part name",
-        max_length=255,
-        null=False
-    )
-    xml_root = models.CharField(max_length=255, null=False)
-    is_shell = models.BooleanField(null=False)
 
 '''UNMANAGED APP-CREATED MODELS'''
 class Organization(models.Model):
-    '''This model represents a MySQL View that pulls the most recent taxpayer
-    name for each EIN from FilingFiling'''
+    '''This model represents a 1-1 org MySQL table generated from mgmt command scripts'''
     ein = models.CharField(primary_key=True, max_length=31, null=False)
     taxpayer_name = models.CharField(max_length=255, blank=False, null=False)
 
