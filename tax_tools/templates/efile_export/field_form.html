@@ -1,0 +1,36 @@
+{% extends 'efile_export/base.html' %}
+
+{% block content %}
+  <h1>heyyyyoooo</h1>
+  <div id='accordion'>
+    <form action="{% url 'field-form' %}" method="post">
+      {% csrf_token %}
+      {{ formset.management_form }}
+      {% for form in formset %}
+      <div class='card'>
+        <div class='card-header' id='headingOne'>
+          <h5 class='mb-0'>
+            <button type='button' class="btn btn-link" data-toggle="collapse" data-target="#collapse{{form.prefix}}" aria-expanded="true" aria-controls="collapse{{form.prefix}}">
+              {{ form.sked_name }}: {{ form.name }}
+            </button>
+          </h5>
+        </div>
+        <div id="collapse{{form.prefix}}" class="collapse hide" aria-labelledby="headingOne" data-parent="#accordion">
+          <div class='card-body'>
+            {% for choice in form.field_names.field.choices %}
+            <div class='form-check'>
+              <input class="form-check-input" name="{{form.prefix}}-field_names" type="checkbox" value="{{choice.0}}" id="id_{{form.prefix}}-field_names_{{choice.0}}" />
+              <label for="id_{{ form.prefix }}-field_names_{{ choice.0 }}">
+                {{ choice.1 }}
+              </label>
+            </div>
+            {% endfor %}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    <input type='submit' />
+    </form>
+  </div>
+
+{% endblock content %}

@@ -15,6 +15,9 @@ class Efile_Metadata(models.Model):
 class Schedule_Metadata(models.Model):
     name = models.CharField("parent schedule name", max_length=255, null=False)
 
+    def __str__(self):
+        return self.name
+
 
 class Schedule_Part_Metadata(Efile_Metadata):
     part_name = models.CharField(
@@ -26,6 +29,9 @@ class Schedule_Part_Metadata(Efile_Metadata):
     parent_sked = models.ForeignKey(Schedule_Metadata, on_delete=models.CASCADE)
     xml_root = models.CharField(max_length=255, null=False)
     is_shell = models.BooleanField(null=False)
+
+    def __str__(self):
+        return self.part_name
 
 
 class Field_Metadata(Efile_Metadata):
@@ -42,12 +48,16 @@ class Field_Metadata(Efile_Metadata):
     parent_sked = models.ForeignKey(Schedule_Metadata, on_delete=models.CASCADE)
     parent_sked_part = models.ForeignKey(Schedule_Part_Metadata, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return "{0}: {1} ({2})".format(self.db_name, self.description, self.line_number)
+
 
 '''UNMANAGED APP-CREATED MODELS'''
 class Organization(models.Model):
     '''This model represents a 1-1 org MySQL table generated from mgmt command scripts'''
     ein = models.CharField(primary_key=True, max_length=31, null=False)
     taxpayer_name = models.CharField(max_length=255, blank=False, null=False)
+    return_type = models.CharField(max_length=100, blank=False, null=False)
 
     def __str__(self):
         return self.taxpayer_name

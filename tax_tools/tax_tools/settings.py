@@ -23,6 +23,8 @@ XML_METADATA_DIR = os.path.join(REPO_ROOT_DIR, '990-xml-metadata')
 
 ALLOWED_HOSTS = ['*']
 
+INTERNAL_IPS = ['127.0.0.1']
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -51,7 +53,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # debug
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
@@ -116,3 +117,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
+
+# Sessions
+SESSION_ENGINE = "django.contrib.sessions.backends.db"

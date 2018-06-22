@@ -1,5 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 from core.models import Organization
+from django.db import transaction
+
 # '''
 # kk so i dont think it's really all that necessary to \update\ these tables
 # the metadata tables are somewhat static, so we should delete the old rows and
@@ -12,7 +14,8 @@ class Command(BaseCommand):
         sql = '''
         CREATE TABLE core_organization AS
           (SELECT `990s`.`filing_filing`.`ein` AS `ein`,
-                  `990s`.`filing_filing`.`taxpayer_name` AS `taxpayer_name`
+                  `990s`.`filing_filing`.`taxpayer_name` AS `taxpayer_name`,
+                  `990s`.`filing_filing`.`return_type` AS `return_type`
            FROM `990s`.`filing_filing`
            WHERE `990s`.`filing_filing`.`id` IN
                (SELECT max(`990s`.`filing_filing`.`id`)
