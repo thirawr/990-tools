@@ -21,17 +21,16 @@
           {% if field.error %}
             <div class="alert alert-warning" role="warning">{{ field.error }}</div>
           {% endif %}
-          <label for="id_{{ form.prefix }}-field_names_{{ choice.0 }}">
+          <label for="{{ field.id_for_label }}">
             {{ field.label }}
           </label>
           {{ field }}
-          <p class="help-text">{{ field.help_text }}</p>
+          <p class="form-text text-muted">{{ field.help_text }}</p>
         {% endfor %}
       </div>
       <button type='submit' class="btn btn-dark">Submit</button>
     </form>
   </div>
-
 {% endblock content %}
 
 {% block footer %}

@@ -1,8 +1,9 @@
 # from django.forms import ModelForm, SelectMultiple
 from django import forms
 from django.forms.formsets import BaseFormSet
+from django.db.models import Q
 from dal import autocomplete
-from core.models import Field_Metadata, Schedule_Part_Metadata, FilingFiling, Organization
+from core.models import Field_Metadata, Schedule_Part_Metadata, FilingFiling, Organization, Schedule_Metadata
 
 class OrganizationForm(forms.ModelForm):
     # queryset = FilingFiling.objects.distinct('ein')
@@ -58,17 +59,58 @@ class OrganizationTypeForm(forms.Form):
         (3, '990PF')
     )
 
-    return_type = forms.ChoiceField(choices=choices)
+    return_type = forms.ChoiceField(
+        choices=choices,
+        help_text="Is this a private foundation (990PF)? Are the organization's gross receipts less than $200,000 and total assets less than $500,000 (990EZ)? Are its gross receipts worth at least $200,000 and total assets at least $500,000 (990)?",
+        widget=forms.Select(
+            attrs={
+                'class': 'custom-select form-control'
+            }
+        )
+    )
 
 
-    class Meta:
-        widgets = {
-            'return_type': forms.CheckboxInput( attrs={'class': 'form-control'})
-        }
+    # class Meta:
+    #     widgets = {
+    #         'return_type': forms.CheckboxInput(attrs={'class': 'custom-select form-control'})
+    #     }
 
 
-class SchedulePartForm(forms.Form):
+class SchedulePartsForm(forms.Form):
+    schedule_parts = forms.ModelMultipleChoiceField(queryset=Field_Metadata.objects.none(), widget=forms.CheckboxSelectMultiple)
+
+    # def __init__(self, *args, **kwargs):
+    #     return_type = kwargs.pop('return_type')  # this may come through as a text field
+    #     super(SchedulePartsForm, self).__init__(*args, **kwargs)
+    #     if return_type == '1':
+    #         queryset = Schedule_Part_Metadata.objects.exclude(Q(part_key__istartswith='pf') | Q(part_key__istartswith='ez'))
+    #     elif return_type == '2':
+    #         queryset = Schedule_Part_Metadata.objects.filter(part_key__istartswith='ez')
+    #     else:
+    #         queryset = Schedule_Part_Metadata.objects.filter(part_key__istartswith='pf')
+    #
+    #     schedule_parts = forms.ModelMultipleChoiceField(queryset=queryset)
+
+
+# this is a formset that represents the Schedule (grouping Schedule Parts underneath)
+class SchedulePartsFormSet(BaseFormSet):
     def __init__(self, *args, **kwargs):
-        form_type = kwargs.pop('form_type')  # this may come through as a text field
-        if form_type:
-            schedule_parts = forms.ModelMultipleChoiceField(queryset=Schedule_Part_Metadata.objects.filter())
+        # return_type = kwargs.pop('return_type')  # this may come through as a text field
+        parent_sked_ids = kwargs.pop('parent_sked_ids')
+        super(SchedulePartsFormSet, self).__init__(*args, **kwargs)
+        #
+        # if return_type == '1':
+        #     schedule_queryset = Schedule_Part_Metadata.objects.exclude(Q(part_key__istartswith='pf') | Q(part_key__istartswith='ez'))
+        # elif return_type == '2':
+        #     schedule_queryset = Schedule_Part_Metadata.objects.filter(part_key__istartswith='ez')
+        # else:
+        #     schedule_queryset = Schedule_Part_Metadata.objects.filter(part_key__istartswith='pf')
+
+
+        for index, form in enumerate(self.forms):
+            parent_sked_id = parent_sked_ids[index]
+            form.fields['schedule_parts'].queryset = Schedule_Part_Metadata.objects.filter(parent_sked_id=parent_sked_id)
+            parent_sked = Schedule_Metadata.objects.get(id=parent_sked_id)
+            form.parent_sked_name = parent_sked.name
+
+        # schedule_parts = forms.ModelMultipleChoiceField(queryset=queryset)

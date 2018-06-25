@@ -60,7 +60,7 @@ class Organization(models.Model):
     return_type = models.CharField(max_length=100, blank=False, null=False)
 
     def __str__(self):
-        return self.taxpayer_name
+        return "{0} ({1})".format(self.taxpayer_name, self.ein)
 
     class Meta:
         managed = False
