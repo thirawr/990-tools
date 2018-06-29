@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from efile_export.views import Home, OrgNameAutocomplete, org_form, field_form, OrgForm, OrgTypeForm, SkedPartsForm
+from efile_export.views import Home, OrgNameAutocomplete, org_form, field_form, OrgForm, OrgTypeForm, SkedPartsForm, FYForm, get_org_return_type, report_success, stream_report
 
 urlpatterns = [
     path('', Home.as_view(), name='export-home'),
@@ -23,5 +23,9 @@ urlpatterns = [
     path('field-form', field_form, name='field-form'),
     path('type-form', OrgTypeForm.as_view(), name='type-form'),
     path('sked-parts-form', SkedPartsForm.as_view(), name='sked-parts-form'),
+    path('fy-form', FYForm.as_view(), name='fy-form'),
+    path('success', report_success, name='report-success'),
+    path('stream_report', stream_report, name='stream_report'),
     path('org-autocomplete/', OrgNameAutocomplete.as_view(), name='org-autocomplete'),
+    path('org-type-lookup/', get_org_return_type, name='get-org-type')
 ]

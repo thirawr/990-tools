@@ -1,0 +1,15 @@
+{% extends 'efile_export/form_base.html' %}
+
+{% block form %}
+<div class='form-check form-group'>
+  {% for choice in form.year.field.choices %}
+    <div>
+    <input class="form-check-input" name="{{sub_form.prefix}}-field_names" type="checkbox" value="{{choice.0}}" id="id_{{sub_form.prefix}}-field_names_{{choice.0}}" />
+    <label for="id_{{ sub_form.prefix }}-field_names_{{ choice.0 }}">
+      {{ choice.1 }}
+    </label>
+  </div>
+  {% endfor %}
+
+</div>
+{% endblock form %}

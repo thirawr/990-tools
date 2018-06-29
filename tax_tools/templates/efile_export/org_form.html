@@ -1,0 +1,15 @@
+{% block form %}
+<div class="form-group">
+  {% for field in form %}
+    {% if field.error %}
+      <div class="alert alert-warning" role="warning">{{ field.error }}</div>
+    {% endif %}
+    <label for="{{ field.id_for_label }}">
+      {{ field.label }}
+    </label>
+    {{ field }}
+    <p class="form-text text-muted">{{ field.help_text }}</p>
+  {% endfor %}
+</div>
+<button type='submit' class="btn btn-dark">Submit</button>
+{% endblock form %}

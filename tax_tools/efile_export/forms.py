@@ -24,6 +24,25 @@ class OrganizationForm(forms.ModelForm):
         }
 
 
+class OrganizationSingleForm(forms.ModelForm):
+    # queryset = FilingFiling.objects.distinct('ein')
+    # queryset = Organization.objects.all()
+    # taxpayer_name = forms.ModelChoiceField(
+    #     queryset=Organization.objects.filter(id__lte=1000),
+    #     widget=autocomplete.ModelSelect2(url='org-autocomplete')
+    # )
+
+    class Meta:
+        model = Organization
+        fields = ('taxpayer_name',)
+        widgets = {
+            'taxpayer_name': autocomplete.Select2(url='org-autocomplete', attrs={'class': 'form-control'})
+        }
+        labels = {
+            'taxpayer_name': ('Nonprofit Names'),
+        }
+
+
 class FieldsForm(forms.Form):
     field_names = forms.ModelMultipleChoiceField(queryset=Field_Metadata.objects.none(), widget=forms.CheckboxSelectMultiple)
 
@@ -77,7 +96,14 @@ class OrganizationTypeForm(forms.Form):
 
 
 class SchedulePartsForm(forms.Form):
-    schedule_parts = forms.ModelMultipleChoiceField(queryset=Field_Metadata.objects.none(), widget=forms.CheckboxSelectMultiple)
+    schedule_parts = forms.ModelMultipleChoiceField(
+        queryset=Field_Metadata.objects.none(),
+        widget=forms.CheckboxSelectMultiple(
+            attrs={
+                'class': 'form-control'
+            }
+        )
+    )
 
     # def __init__(self, *args, **kwargs):
     #     return_type = kwargs.pop('return_type')  # this may come through as a text field
@@ -114,3 +140,32 @@ class SchedulePartsFormSet(BaseFormSet):
             form.parent_sked_name = parent_sked.name
 
         # schedule_parts = forms.ModelMultipleChoiceField(queryset=queryset)
+
+
+class FiscalYearForm(forms.Form):
+    qs = FilingFiling.objects.values_list('tax_period', flat=True).distinct()
+    yr_map = {}
+
+    for prd in qs:
+        fiscal_year = str(prd)[:4]
+        fiscal_year = int(fiscal_year)
+        if fiscal_year not in yr_map.keys():
+            yr_map[fiscal_year] = fiscal_year
+
+
+    choices = tuple([
+        tuple([yr, yr_key]) for yr_key, yr in yr_map.items()
+    ])
+
+    choices = sorted(choices, key=lambda x: x[1])
+
+    print(choices)
+
+    year = forms.MultipleChoiceField(
+        choices=choices,
+        widget=forms.SelectMultiple(
+            attrs={
+                'class': 'form-control'
+            }
+        )
+    )

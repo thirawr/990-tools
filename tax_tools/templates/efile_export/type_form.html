@@ -1,4 +1,67 @@
-{% extends 'efile_export/simple_form.html' %}
+{% extends 'efile_export/form_base.html' %}
+
+{% block main_form %}
+<div class="form-group">
+  {% for field in form %}
+    {% if field.error %}
+      <div class="alert alert-warning" role="warning">{{ field.error }}</div>
+    {% endif %}
+    <label for="{{ field.id_for_label }}">
+      {{ field.label }}
+    </label>
+    {{ field }}
+    <p class="form-text text-muted">{{ field.help_text }}</p>
+  {% endfor %}
+</div>
+<button type='submit' class="btn btn-dark">Submit</button>
+{% endblock main_form %}
+
 {% block autocomp_org_search %}
-<h3 class="display-4">hi</h3>
+{{ autocomp_form }}
 {% endblock autocomp_org_search %}
+
+{% block form_scripts %}
+
+<script>
+// var select_text =
+
+// $(document.body).on('change', function(){
+//   alert('change happened');
+// });
+//
+// $(document).ready(function(){
+//   $('span#select2-id_taxpayer_name-container.select2-selection__rendered').change(function(){
+//     alert('fck');
+//     })
+//   }
+// );
+
+    // $(document).on('autocompleteLightInitialize', '[data-autocomplete-light-function=select2]',
+    //   function () {
+    //     console.log('registering', $(this));
+    //     $(this).on('select2:selecting', function (evt) {
+    //       var select = $(this);
+    //       $(this).on('change', function (evt) {
+    //         console.log('woooooo');
+    //       })
+    //       console.log('wheee', evt);
+    //     });
+    //   }
+    // );
+    //
+    // $('select2:selecting').on('change', function(evt){
+    //   alert('woooooo');
+    // })
+
+    // (function($){
+    //     $(document).on('autocompleteLightInitialize', '[data-autocomplete-light-function=select2]',
+    //       function () {
+    //         $(this).on('select2:selecting', function (evt) {
+    //           console.log('wheee', evt);
+    //         });
+    //       }
+    //     );
+    // })(django.jQuery);
+</script>
+
+{% endblock form_scripts %}

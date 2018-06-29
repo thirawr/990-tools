@@ -1,0 +1,14 @@
+{% extends 'efile_export/form_base.html' %}
+{% load static %}
+
+{% block main_form %}
+<!--   {% for choice in form.year.field.choices %}
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="{{ choice.0 }}">
+      <label class="form-check-label" for="{{choice.0}}">{{ choice.0 }}</label>
+    </div>
+  {% endfor %}
+ -->
+ {{ form }}
+ 	<button type='submit' class="btn btn-dark">Submit</button>
+ {% endblock main_form %}

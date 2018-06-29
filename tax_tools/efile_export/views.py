@@ -1,29 +1,58 @@
 from django.shortcuts import render
 from dal import autocomplete
-from efile_export.forms import OrganizationForm, FieldsForm, FieldsFormSet, OrganizationTypeForm, SchedulePartsForm, SchedulePartsFormSet
-from core.models import Organization, Schedule_Part_Metadata
+from efile_export.forms import OrganizationForm, FieldsForm, FieldsFormSet, OrganizationTypeForm, SchedulePartsForm, SchedulePartsFormSet, OrganizationSingleForm, FiscalYearForm
+from core.models import Organization, Schedule_Part_Metadata, FilingFiling
 from django.views.generic import TemplateView, FormView
 from django.urls import reverse_lazy
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import redirect
 from django.forms import formset_factory
 from django.views import View
 from django.db.models import Q
+from efile_export.generate_report import generate_report, get_return_type_label
+import json
+import csv
 
 # Create your views here.
 # def home(request):
 #     return render(request, 'efile_export/test.html', {'form': form})
 
+SESSION_KEYS = {
+    'eins': 'eins',
+    'year': 'year',
+    'return_type': 'return_type',
+    'schedule_parts': 'schedule_parts'
+}
+# class ReportSuccess(TemplateView):
+#     template_name = 'efile_export/success.html'
 
-def get_return_type_label(return_type_code):
-    return_type_map = {
-        '1': ['990', '990O', '990EO'],
-        '2': ['990EZ'],
-        '3': ['990PF']
-    }
 
-    return_type_code = str(return_type_code)
-    return return_type_map[return_type_code]
+def stream_report(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = "attachment; filename=\"somefilename.csv\""
+
+    writer = csv.writer(response)
+
+    # writer.writerows(generate_report(request))  commented for commit
+
+    # writer.writerow(['ha HA', 'foo', 'bar'])
+    # writer.writerow(['ha HO', 'baz', 'spam'])
+
+    return response
+
+
+def report_success(request):
+    # check for all keys in session
+    session_keys = SESSION_KEYS.values()
+    for key in session_keys:
+        if key not in request.session.keys():
+            raise Http404
+        else:
+            return render(request, 'efile_export/success.html')
+            # use session keys to build queryset
+            # generate CSV (separate fnct)
+            # stream CSV (separate fnct)
+            # render page
 
 
 class Home(TemplateView):
@@ -78,6 +107,7 @@ class SimpleFormBase(View):
             request.session.save()  # not sure if this is necessary
             return HttpResponseRedirect(reverse_lazy(self.next_page_url))
         else:
+            print('FUCK')
             return render(request, self.template_path, context)
 
 
@@ -101,18 +131,45 @@ class OrgForm(SimpleFormBase):
         return form
 
 
+class FYForm(SimpleFormBase):
+    page_title = 'Fiscal Years'
+    template_path = 'efile_export/simple_form.html'
+    action_url = 'fy-form'
+    description_text = "Select as many fiscal years as you'd like to include in your efile report from the list below."
+    next_page_url = 'org-form'
+    session_key = 'year'
+    cleaned_data_key = 'year'
+
+    def generate_form(self, request):
+        form = FiscalYearForm(request.POST or None)
+        # print(form)
+
+        return form
+
+
 class OrgTypeForm(SimpleFormBase):
     page_title = 'Organization Type'
     template_path = 'efile_export/type_form.html'
     action_url = 'type-form'
     description_text = "Select the organization type below. Not sure which 990 your organizations file? Look it up in the search box at the bottom of this page."
-    next_page_url = 'org-form'
+    next_page_url = 'fy-form'
     session_key = 'return_type'
     cleaned_data_key = session_key
 
+    def generate_context(self, request):
+        forms = self.generate_form(request)
+        return {
+            'page_title': self.page_title,
+            'action_url': self.action_url,
+            'description_text': self.description_text,
+            'form': forms['type'],
+            'autocomp_form': forms['autocomp_form']
+        }
+
     def generate_form(self, request):
         form = OrganizationTypeForm(request.POST or None)
-        return form
+        autocomp_form = OrganizationSingleForm(request.POST or None)
+        return {'type': form, 'autocomp_form': autocomp_form}
 
 
 def org_form(request):
@@ -141,7 +198,7 @@ class SkedPartsForm(SimpleFormBase):
     template_path = 'efile_export/sked_parts_form.html'
     action_url = 'sked-parts-form'
     description_text = 'tktktk'
-    next_page_url = 'export-home'
+    next_page_url = 'report-success'
     session_key = 'schedule_parts'
     cleaned_data_key = session_key
 
@@ -170,11 +227,15 @@ class SkedPartsForm(SimpleFormBase):
                 if 'field_names' in key:
                     sked_part_ids += request.POST.getlist(key)
                     # print(value)
+            # form.clean()
             header_id = Schedule_Part_Metadata.objects.get(part_key='returnheader990x_part_i').id
             sked_part_ids.append(header_id)
             print(sked_part_ids)
-            # request.session[self.session_key] = form.cleaned_data[self.cleaned_data_key]
-            # request.session.save()  # not sure if this is necessary
+            # print(form.cleaned_data)
+            request.session[self.session_key] = sked_part_ids
+            request.session['report_form_completed'] = True
+            request.session.save()  # not sure if this is necessary
+            print(request.session.keys())
             return HttpResponseRedirect(reverse_lazy(self.next_page_url))
         else:
             return render(request, self.template_path, context)
@@ -201,12 +262,40 @@ def field_form(request):
 class OrgNameAutocomplete(autocomplete.Select2QuerySetView):
 
     def get_queryset(self):
-        return_type_coded = self.request.session['return_type']
-        print(return_type_coded)
-        return_type_list = get_return_type_label(return_type_coded)
         qs = Organization.objects.all()
+
+        try:
+            return_type_coded = self.request.session['return_type']
+            print(return_type_coded)
+            return_type_list = get_return_type_label(return_type_coded)
+        except KeyError:
+            if self.q:
+                return qs.filter(taxpayer_name__istartswith=self.q)
 
         if self.q:
             qs = qs.filter(taxpayer_name__istartswith=self.q, return_type__in=return_type_list)
 
         return qs
+
+
+from django.views.decorators.csrf import csrf_exempt
+@csrf_exempt
+def get_org_return_type(request):
+    if request.method == 'POST':
+        print(request.POST)
+        try:
+            ein = request.POST['taxpayer_name']
+        except (IndexError, KeyError):
+            print('ah fuc ', request.POST)
+
+        print(ein)
+
+    data = {}
+
+    try:
+        return_type = FilingFiling.objects.filter(ein=ein).order_by('-sub_date')[0].return_type
+        data = {'return_type': return_type}
+    except FilingFiling.DoesNotExist:
+        print ('oh NO')
+
+    return HttpResponse(json.dumps(data), content_type="application/json")
