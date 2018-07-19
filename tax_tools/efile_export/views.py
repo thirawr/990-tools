@@ -1,7 +1,8 @@
+import json
+import csv
 from django.shortcuts import render
 from dal import autocomplete
-from efile_export.forms import OrganizationForm, FieldsForm, FieldsFormSet, OrganizationTypeForm, SchedulePartsForm, SchedulePartsFormSet, OrganizationSingleForm, FiscalYearForm
-from core.models import Organization, Schedule_Part_Metadata, FilingFiling
+from core.models import Organization, Schedule_Part_Metadata, FilingFiling, Schedule_Metadata
 from django.views.generic import TemplateView, FormView
 from django.urls import reverse_lazy
 from django.http import HttpResponse, HttpResponseRedirect, Http404
@@ -10,8 +11,10 @@ from django.forms import formset_factory
 from django.views import View
 from django.db.models import Q
 from efile_export.generate_report import generate_report, get_return_type_label
-import json
-import csv
+from efile_export.forms import (OrganizationForm, FieldsForm, FieldsFormSet,
+                                OrganizationTypeForm, SchedulePartsForm,
+                                SchedulePartsFormSet, OrganizationSingleForm,
+                                FiscalYearForm)
 
 # Create your views here.
 # def home(request):
@@ -205,11 +208,16 @@ class SkedPartsForm(SimpleFormBase):
     def generate_form(self, request):
         return_type = request.session['return_type']
         if return_type == '1':
-            parent_sked_ids = Schedule_Part_Metadata.objects.exclude(Q(part_key__istartswith='pf') | Q(part_key__istartswith='ez') | Q(part_key='returnheader990x_part_i')).values_list('parent_sked_id', flat=True).distinct()
+            base_form = Schedule_Metadata.objects.get(name='IRS990')
+            # parent_sked_ids = Schedule_Part_Metadata.objects.exclude(Q(part_key__istartswith='pf') | Q(part_key__istartswith='ez') | Q(part_key='returnheader990x_part_i')).values_list('parent_sked_id', flat=True).distinct()
         elif return_type == '2':
-            parent_sked_ids = Schedule_Part_Metadata.objects.filter(part_key__istartswith='ez').exclude(part_key='returnheader990x_part_i').values_list('parent_sked_id', flat=True).distinct()
+            base_form = Schedule_Metadata.objects.get(name='IRS990EZ')
+            # parent_sked_ids = Schedule_Part_Metadata.objects.filter(part_key__istartswith='ez').exclude(part_key='returnheader990x_part_i').values_list('parent_sked_id', flat=True).distinct()
         else:
-            parent_sked_ids = Schedule_Part_Metadata.objects.filter(part_key__istartswith='pf').exclude(part_key='returnheader990x_part_i').values_list('parent_sked_id', flat=True).distinct()
+            base_form = Schedule_Metadata.objects.get(name='IRS990PF')
+            # parent_sked_ids = Schedule_Part_Metadata.objects.filter(part_key__istartswith='pf').exclude(part_key='returnheader990x_part_i').values_list('parent_sked_id', flat=True).distinct()
+
+        parent_sked_ids = [base_form.id] + list(base_form.schedules.all().values_list('id', flat=True).distinct())
 
         SchedulePartsFormSetFactory = formset_factory(SchedulePartsForm, formset=SchedulePartsFormSet, extra=len(parent_sked_ids))
         schedule_parts_form_set = SchedulePartsFormSetFactory(request.POST or None, request.FILES or None, parent_sked_ids=parent_sked_ids)

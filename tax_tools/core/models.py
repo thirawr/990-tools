@@ -14,6 +14,7 @@ class Efile_Metadata(models.Model):
 
 class Schedule_Metadata(models.Model):
     name = models.CharField("parent schedule name", max_length=255, null=False)
+    associated_forms = models.ManyToManyField('Schedule_Metadata', related_name='schedules')
 
     def __str__(self):
         return self.name

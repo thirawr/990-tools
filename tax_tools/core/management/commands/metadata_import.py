@@ -11,6 +11,29 @@ import os
 # replace them with the new on "update"
 # '''
 
+IRS990 = 'IRS990'
+IRS990EZ = 'IRS990EZ'
+IRS990PF = 'IRS990PF'
+
+SKED_PARENT_RETURN_MAP = {
+    'IRS990ScheduleA': [IRS990, IRS990EZ],
+    'IRS990ScheduleB': [IRS990, IRS990EZ, IRS990PF],
+    'IRS990ScheduleC': [IRS990, IRS990EZ],
+    'IRS990ScheduleD': [IRS990],
+    'IRS990ScheduleE': [IRS990, IRS990EZ],
+    'IRS990ScheduleF': [IRS990],
+    'IRS990ScheduleG': [IRS990, IRS990EZ],
+    'IRS990ScheduleH': [IRS990],
+    'IRS990ScheduleI': [IRS990],
+    'IRS990ScheduleJ': [IRS990],
+    'IRS990ScheduleK': [IRS990],
+    'IRS990ScheduleL': [IRS990, IRS990EZ],
+    'IRS990ScheduleM': [IRS990],
+    'IRS990ScheduleN': [IRS990, IRS990EZ],
+    'IRS990ScheduleO': [IRS990, IRS990EZ],
+    'IRS990ScheduleR': [IRS990],
+}
+
 
 class Command(BaseCommand):
     def read_csv(self, path):
@@ -27,6 +50,7 @@ class Command(BaseCommand):
 
         Field_Metadata.objects.all().delete()
         Schedule_Part_Metadata.objects.all().delete()
+        Schedule_Metadata.objects.all().delete()
 
         for row in schedule_parts_rows:
             parent_sked_name = row['parent_sked']
@@ -35,6 +59,11 @@ class Command(BaseCommand):
             except Schedule_Metadata.DoesNotExist:
                 parent_sked = Schedule_Metadata(name=parent_sked_name)
                 parent_sked.save()
+                if parent_sked_name in SKED_PARENT_RETURN_MAP.keys():
+                    for parent_return_name in SKED_PARENT_RETURN_MAP[parent_sked_name]:
+                        parent_return = Schedule_Metadata.objects.get(name=parent_return_name)
+                        parent_sked.associated_forms.add(parent_return)
+
             part_key = row['parent_sked_part']
             ordering = row['ordering']
             part_name = row['part_name']
