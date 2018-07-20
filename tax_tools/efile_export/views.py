@@ -51,6 +51,7 @@ def report_success(request):
         if key not in request.session.keys():
             raise Http404
         else:
+            generate_report(request)  # idk where to put this
             return render(request, 'efile_export/success.html')
             # use session keys to build queryset
             # generate CSV (separate fnct)
