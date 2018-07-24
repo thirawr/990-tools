@@ -31,10 +31,12 @@ SESSION_KEYS = {
 
 
 def stream_report(request):
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = "attachment; filename=\"somefilename.csv\""
+    archive = generate_report(request)
+    response = HttpResponse(archive, content_type='application/x-zip-compressed')
+    response['Content-Disposition'] = "attachment; filename=\"990export.zip\""
 
-    writer = csv.writer(response)
+
+    # writer = csv.writer(response)
 
     # writer.writerows(generate_report(request))  commented for commit
 
@@ -51,7 +53,7 @@ def report_success(request):
         if key not in request.session.keys():
             raise Http404
         else:
-            generate_report(request)  # idk where to put this
+
             return render(request, 'efile_export/success.html')
             # use session keys to build queryset
             # generate CSV (separate fnct)
@@ -271,20 +273,22 @@ def field_form(request):
 class OrgNameAutocomplete(autocomplete.Select2QuerySetView):
 
     def get_queryset(self):
-        qs = Organization.objects.all()
-
         try:
             return_type_coded = self.request.session['return_type']
             print(return_type_coded)
             return_type_list = get_return_type_label(return_type_coded)
+            qs = Organization.objects.filter(return_type__in=return_type_list)
         except KeyError:
+            qs = Organization.objects.all()
             if self.q:
                 return qs.filter(taxpayer_name__istartswith=self.q)
+            else:
+                return qs
 
         if self.q:
-            qs = qs.filter(taxpayer_name__istartswith=self.q, return_type__in=return_type_list)
-
-        return qs
+            return qs.filter(taxpayer_name__istartswith=self.q, return_type__in=return_type_list)
+        else:
+            return qs
 
 
 from django.views.decorators.csrf import csrf_exempt
