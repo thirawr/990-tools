@@ -41,14 +41,14 @@ def get_fields_metadata_from_sked_part(parent_sked_part_id):
         db_table_name = db_table_name.replace('_', '')
         xpath = field.xpath.lower()
         # print(sked_part_key)
-        if 'schedule' in xpath:
-            db_table_name_prefix = 'return'
-        elif 'irs990pf' in xpath:
-            db_table_name_prefix = 'returnpf'
-        elif 'irs990ez' in xpath:
-            db_table_name_prefix = 'returnez'
-        else:
-            db_table_name_prefix = 'return'
+        # if 'schedule' in xpath:
+        #     db_table_name_prefix = 'return'
+        # elif 'irs990pf' in xpath:
+        #     db_table_name_prefix = 'returnpf'
+        # elif 'irs990ez' in xpath:
+        #     db_table_name_prefix = 'returnez'
+        # else:
+        db_table_name_prefix = 'return'
         # if '990' in return_type_list:
         #     sked_part_key_prefix = 'return'  # idt this will work because we have multi-form schedules  - schedules always get return_ prefix
         # elif '990EZ' in return_type_list:
