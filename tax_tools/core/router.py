@@ -32,7 +32,9 @@ class Core_Router:
         Make sure the core app only appears in the 'auth_db'
         database.
         """
-        if 'Return' in model_name:
-            return False
-        elif 'Metadata' in model_name:
+        if 'core' in app_label:
             return True
+        elif 'Return' in model_name:
+            return False
+        else:
+            return False

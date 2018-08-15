@@ -21,7 +21,7 @@ from efile_export.forms import (OrganizationForm, FieldsForm, FieldsFormSet,
 #     return render(request, 'efile_export/test.html', {'form': form})
 
 SESSION_KEYS = {
-    'eins': 'eins',
+    'org_id': 'org_id',
     'year': 'year',
     'return_type': 'return_type',
     'schedule_parts': 'schedule_parts'
@@ -127,14 +127,19 @@ class OrgForm(SimpleFormBase):
         be able to include organizations that file the type of form you
         specified previously.'''
     next_page_url = 'sked-parts-form'
-    session_key = 'eins'
+    session_key = 'org_id'
     cleaned_data_key = 'taxpayer_name'
 
     def generate_form(self, request):
-        initial = {'eins': request.session.get('eins', None)}
+        initial = {'org_id': request.session.get('org_id', None)}
         form = OrganizationForm(request.POST or None, initial=initial)
 
         return form
+
+    def get(self, request):
+        if 'return_type' not in request.session.keys() or 'year' not in request.session.keys():
+            raise Http404("Please start this form from the beginning")
+        return super().get(request)
 
 
 class FYForm(SimpleFormBase):
@@ -178,23 +183,23 @@ class OrgTypeForm(SimpleFormBase):
         return {'type': form, 'autocomp_form': autocomp_form}
 
 
-def org_form(request):
-    initial = {'eins': request.session.get('eins', None)}
-    form = OrganizationForm(request.POST or None, initial=initial)
-    context = {
-        'action_url': 'org-form',
-        'page_title': 'choooooose your orgs',
-        'form': form,
-        'description_text': 'placeholder text tktktktktktkt tk tkk tk tk tk ktkttktk ktk tkt ktkt ktk ktktkk tk'
-    }
-    if request.method == 'POST':
-        print(request.POST)
-        if form.is_valid():
-            print('valid!!!')
-            request.session['eins'] = form.cleaned_data['taxpayer_name']
-            request.session.save()
-            return HttpResponseRedirect(reverse_lazy('field-form'))
-    return render(request, 'efile_export/org_form.html', context)
+# def org_form(request):
+#     initial = {'org_id': request.session.get('org_id', None)}
+#     form = OrganizationForm(request.POST or None, initial=initial)
+#     context = {
+#         'action_url': 'org-form',
+#         'page_title': 'choooooose your orgs',
+#         'form': form,
+#         'description_text': 'placeholder text tktktktktktkt tk tkk tk tk tk ktkttktk ktk tkt ktkt ktk ktktkk tk'
+#     }
+#     if request.method == 'POST':
+#         print(request.POST)
+#         if form.is_valid():
+#             print('valid!!!')
+#             request.session['org_id'] = form.cleaned_data['taxpayer_name']
+#             request.session.save()
+#             return HttpResponseRedirect(reverse_lazy('field-form'))
+#     return render(request, 'efile_export/org_form.html', context)
 
     # return redirect()
 
@@ -256,7 +261,7 @@ def field_form(request):
     sked_part_ids = Schedule_Part_Metadata.objects.values_list('id', flat=True).distinct()
     # formset = formset_factory(FieldsForm) # FieldsForm(request.POST or None)
     # fields_formset = formset()
-    print(request.session['eins'])
+    # print(request.session['org_id'])
     FieldsFormSetFactory = formset_factory(FieldsForm, formset=FieldsFormSet, extra=len(sked_part_ids))
     if request.method == 'POST':
         print(request.POST)
@@ -273,20 +278,18 @@ def field_form(request):
 class OrgNameAutocomplete(autocomplete.Select2QuerySetView):
 
     def get_queryset(self):
-        try:
-            return_type_coded = self.request.session['return_type']
-            print(return_type_coded)
-            return_type_list = get_return_type_label(return_type_coded)
-            qs = Organization.objects.filter(return_type__in=return_type_list)
-        except KeyError:
-            qs = Organization.objects.all()
-            if self.q:
-                return qs.filter(taxpayer_name__istartswith=self.q)
-            else:
-                return qs
+        return_type_coded = self.request.session['return_type']
+        fiscal_years = self.request.session['year']
+        # print(fiscal_years)
+        # print(return_type_coded)
+        return_type_list = get_return_type_label(return_type_coded)
+        q_filters = Q()
+        for fy in fiscal_years:
+            q_filters = q_filters | Q(fiscal_year__fiscal_year=fy)
+        qs = Organization.objects.filter(q_filters, return_type__in=return_type_list)
 
         if self.q:
-            return qs.filter(taxpayer_name__istartswith=self.q, return_type__in=return_type_list)
+            return qs.filter(taxpayer_name__istartswith=self.q)
         else:
             return qs
 

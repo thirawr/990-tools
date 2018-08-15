@@ -53,19 +53,19 @@ class Field_Metadata(Efile_Metadata):
         return "{0}: {1} ({2})".format(self.db_name, self.description, self.line_number)
 
 
-'''UNMANAGED APP-CREATED MODELS'''
 class Organization(models.Model):
     '''This model represents a 1-1 org MySQL table generated from mgmt command scripts'''
-    ein = models.CharField(primary_key=True, max_length=31, null=False)
-    taxpayer_name = models.CharField(max_length=255, blank=False, null=False)
+    ein = models.CharField(db_index=True, max_length=31, null=False)
+    taxpayer_name = models.CharField(db_index=True, max_length=255, blank=False, null=False)
     return_type = models.CharField(max_length=100, blank=False, null=False)
 
     def __str__(self):
         return "{0} ({1})".format(self.taxpayer_name, self.ein)
 
-    class Meta:
-        managed = False
-        db_table = 'core_organization'
+
+class Fiscal_Year(models.Model):
+    fiscal_year = models.IntegerField(db_index=True, null=False)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
 
 '''
 UNMANAGED 990 XML DATABASE MODELS

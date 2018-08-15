@@ -76,6 +76,7 @@ def get_object_ids(eins, fiscal_years):
         for ein in eins:
             print('ein:', ein)
             possible_filings = FilingFiling.objects.filter(tax_period__startswith=fy, ein=ein)
+            print('pf: ', possible_filings)
             if not possible_filings:
                 continue  # nothing here, continue on
             elif len(possible_filings) > 1:
@@ -144,6 +145,9 @@ def generate_csv_files(model_name_rows_map, model_name_field_map):
     return files
 
 
+def get_eins_from_org_ids(org_ids):
+    orgs = Organization.objects.filter(id__in=org_ids)
+    return [org.ein for org in orgs]
 
 
 def generate_report(request):
@@ -174,23 +178,26 @@ def generate_report(request):
 
     # prep the fy: objcet_id map
     yrs = request.session.get('year', None)
-    eins = literal_eval(request.session.get('eins', None))
-    # print(eins)
-    # print(type(eins))
-    if not yrs or not eins:
+    org_ids = literal_eval(request.session.get('org_id', None))
+    # print(org_ids)
+    # print(type(org_ids))
+    if not yrs or not org_ids:
         pass   # raise something
+
+    eins = get_eins_from_org_ids(org_ids)
     fy_object_id_map = get_object_ids(eins, yrs)
-    print(fy_object_id_map)
+    print('fy_object_id_map: ', fy_object_id_map)
 
     object_ids = []
     for object_id_list in fy_object_id_map.values():
         object_ids += object_id_list
+    print('object_ids: ', object_ids)
 
     model_name_rows_map = {}
     for db_table_name in model_name_field_meta_map.keys():
         # if db_table_name not in model_name_rows_map.keys():
             # model_name_rows_map[db_table_name] = []
-        for object_id in object_id_list:
+        for object_id in object_ids:
             rows = get_db_table_row(object_id, db_table_name)
             if rows:
                 for row in rows:
@@ -202,7 +209,7 @@ def generate_report(request):
     # print(sked_part_rows_map)
 
     files = generate_csv_files(model_name_rows_map, model_name_field_meta_map)
-    # print(files)
+    print('files: ', files)
 
     archive = io.BytesIO()
     with zipfile.ZipFile(archive, 'w') as f:
