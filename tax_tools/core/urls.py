@@ -17,14 +17,9 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include
 from efile_export import urls as export_urls
+from core.views import SkedPartList, VariableList
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include('efile_export.urls')),
-    path('export/', include('efile_export.urls')),
-    path('reference/', include('core.urls')),
+    path('schedules', SkedPartList.as_view(), name='reference-skeds'),
+    path('variables', VariableList.as_view(), name='reference-variables')
 ]
-
-if settings.DEBUG:
-    import debug_toolbar
-    urlpatterns = [path(r'__debug__/', include(debug_toolbar.urls))] + urlpatterns

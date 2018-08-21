@@ -3,7 +3,7 @@ import csv
 from django.shortcuts import render
 from dal import autocomplete
 from core.models import Organization, Schedule_Part_Metadata, FilingFiling, Schedule_Metadata
-from django.views.generic import TemplateView, FormView
+from django.views.generic import TemplateView, FormView, ListView, DetailView
 from django.urls import reverse_lazy
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import redirect
@@ -76,7 +76,6 @@ class Home(TemplateView):
 #
 #     return render(request, 'efile_export/test.html', {'form': form})
 
-
 class SimpleFormBase(View):
     '''Abstracted base class for simple form views'''
     page_title = None
@@ -125,7 +124,7 @@ class OrgForm(SimpleFormBase):
         include in your report and it should appear below. Select as many
         nonprofits you'd like to include, although please note you will only
         be able to include organizations that file the type of form you
-        specified previously.'''
+        specified previously. <em>Note:</em> The typeahead box below may initially take some time to load.'''
     next_page_url = 'sked-parts-form'
     session_key = 'org_id'
     cleaned_data_key = 'taxpayer_name'
