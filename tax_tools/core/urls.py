@@ -17,9 +17,9 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include
 from efile_export import urls as export_urls
-from core.views import SkedPartList, VariableList
+from core.views import SkedPartList, VariableDetail, SkedPartDetail
 
 urlpatterns = [
-    path('schedules', SkedPartList.as_view(), name='reference-skeds'),
-    path('variables', VariableList.as_view(), name='reference-variables')
+    path('schedules/', SkedPartList.as_view(), name='reference-skeds'),
+    path('sked-part/<int:sked_part_id>/', SkedPartDetail.as_view(), name='reference-sked-part')
 ]

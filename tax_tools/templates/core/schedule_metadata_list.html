@@ -1,14 +1,45 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-{% for sked in object_list %}
-<h3>{{ sked }}</h3>
-  <div>
-    <ul>
-      {% for sked_part in sked.schedule_part_metadata_set.all %}
-        <li><a href='#'>{{ sked_part.part_name }}</a></li>
-      {% endfor %}
-    </ul>
-  </div>
-{% endfor %}
+<div id='accordion'>
+  {% for sked in object_list %}
+    <div class='card'>
+      <div class='card-header' id='headingOne'>
+        <h5 class='mb-0'>
+          <button type='button' class="btn btn-link" data-toggle="collapse" data-target="#collapse{{sked.id}}" aria-expanded="true" aria-controls="collapse{{sked.id}}">
+            {{ sked }}
+          </button>
+        </h5>
+      </div>
+      <div id="collapse{{sked.id}}" class="collapse hide" aria-labelledby="headingOne" data-parent="#accordion">
+        <div class='card-body'>
+          <ul class="list-group list-group-flush">
+            {% for sked_part in sked.schedule_part_metadata_set.all %}
+              <li class="list-group-item">
+                <a href="{% url 'reference-sked-part' sked_part.id %}">
+                  {{ sked_part }}
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+
+
+{% comment %}
+  {% for sked in object_list %}
+  <h3>{{ sked }}</h3>
+    <div>
+      <ul>
+        {% for sked_part in sked.schedule_part_metadata_set.all %}
+          <li><a href='#'>{{ sked_part.part_name }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endfor %}
+{% endcomment %}
 {% endblock content %}

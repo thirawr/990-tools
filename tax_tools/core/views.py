@@ -9,7 +9,7 @@ class SkedPartList(ListView):
     model = Schedule_Metadata
 
 
-class VariableList(ListView):
+class SkedPartDetail(ListView):
     # this view will take a URL parameter indicating the sked part for which it should show fields
     # display variables in table format
     pass
