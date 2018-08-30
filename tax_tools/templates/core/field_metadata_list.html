@@ -2,10 +2,40 @@
 
 {% block content %}
 
+<h1>
+  {{ sked_part_name }}
+  <small class="text-muted">{{ sked_name }}</small>
+</h1>
+
+<table class="table table-striped table-responsive table-hover">
+  <thead>
+    <tr>
+      <th scope="col">Line Number</th>
+      <th scope="col">Field Name</th>
+      <th scope="col">IRS Type</th>
+      <th scope="col">Description</th>
+      <th scope="col">Details</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for field in object_list %}
+    <tr>
+      <th scope="row">{% if field.line_number %}{{ field.line_number }}{% else %}N/A{% endif %}</th>
+      <td>{% if field.db_name %}{{ field.db_name }}{% else %}N/A{% endif %}</td>
+      <td>{% if field.irs_type %}{{ field.irs_type }}{% else %}N/A{% endif %}</td>
+      <td>{% if field.description %}{{ field.description }}{% else %}N/A{% endif %}</td>
+      <td class="centered-table-col"><a href="{% url 'reference-field-detail' field.id %}"><i class="far fa-folder-open"></i></a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% comment %}
 <ul>
   {% for variable in object_list %}
     <li>{{variable}}</li>
   {% endfor %}
 </ul>
+{% endcomment %}
 
 {% endblock content %}

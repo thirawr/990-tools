@@ -1,0 +1,70 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+{% comment %}
+<div>
+  <h1 class="display-3">{{ object.db_name }}</h1>
+  <p class="lead">{{ object.description }}</p>
+</div>
+<div class="card-group">
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Parent Schedule</h5>
+      <p class="card-text">This field is found on form <strong>{{ object.parent_sked.name }}</strong> in <a href="{% url 'reference-sked-part' object.parent_sked_part.id %}"><strong>{{object.parent_sked_part.part_name}}</strong></a>.</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">XPath</h5>
+      <p class="card-text">In the e-filed XML of this form, this field is found under:</p><p class="text-monospace">{{ object.xpath }}.</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Paper Form</h5>
+      <p class="card-text">On the paper form, this field can be found under <strong>{{ object.line_number }}</strong></p>
+    </div>
+  </div>
+</div>
+{% endcomment %}
+
+<div class="row">
+  <div class="col-3">
+    <div class="list-group">
+      <a href="{% url 'reference-sked-part' object.parent_sked_part.id %}" class="list-group-item list-group-item-action flex-column align-items-start">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1">Parent Form</h5>
+          <!-- <small>3 days ago</small> -->
+        </div>
+        <p class="mb-1">This field is found on form <strong>{{ object.parent_sked.name }}</strong></p>
+        <small>{{ object.parent_sked_part.part_name }}</small>
+      </a>
+      <a href="#" class="list-group-item list-group-item-action flex-column align-items-start disabled">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1">Description</h5>
+          <!-- <small class="text-muted">3 days ago</small> -->
+        </div>
+        <p class="mb-1">{{ object.description }}</p>
+        <small class="text-muted">The IRS designates this field as <strong>{{ object.irs_type }}</strong>.</small>
+      </a>
+      <a href="#" class="list-group-item list-group-item-action flex-column align-items-start disabled">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1">Line Number</h5>
+          <!-- <small class="text-muted">3 days ago</small> -->
+        </div>
+        <p class="mb-1">On the paper form, this field can be found under <strong>{{ object.line_number }}</p>
+        <small class="text-muted">Donec id elit non mi porta.</small>
+      </a>
+    </div>
+  </div>
+  <div class="col-9">
+    <h1 class="display-3">{{ object.db_name }}</h1>
+    <p class="lead">In the XML e-file of this form, this field can be found under XML path </p>
+
+  </div>
+</div>
+
+{% comment %}
+{{ object }}
+{% endcomment %}
+{% endblock content %}

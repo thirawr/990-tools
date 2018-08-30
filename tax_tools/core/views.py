@@ -14,10 +14,23 @@ class FieldsList(ListView):
     # display variables in table format
     def get_queryset(self):
         self.sked_part = get_object_or_404(Schedule_Part_Metadata, id=self.kwargs['sked_part_id'])
-        return Field_Metadata.objects.filter(parent_sked_part=self.sked_part)
+        return Field_Metadata.objects.filter(parent_sked_part=self.sked_part).order_by('ordering')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['sked_part_name'] = self.sked_part.part_name
+        context['sked_name'] = self.sked_part.parent_sked.name
+        return context
+
 
 class FieldDetail(DetailView):
     # show varaible metadata
     # optional?
     # maybe show some extra fields not on the VariableList table
-    pass
+    model = Field_Metadata
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # get associated forms - if this is not a schedule this will just be its parent sked
+        context['associated_forms'] = self.object.parent_sked.associated_forms.all()
+        return context
