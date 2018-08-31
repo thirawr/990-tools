@@ -1,32 +1,6 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-{% comment %}
-<div>
-  <h1 class="display-3">{{ object.db_name }}</h1>
-  <p class="lead">{{ object.description }}</p>
-</div>
-<div class="card-group">
-  <div class="card">
-    <div class="card-body">
-      <h5 class="card-title">Parent Schedule</h5>
-      <p class="card-text">This field is found on form <strong>{{ object.parent_sked.name }}</strong> in <a href="{% url 'reference-sked-part' object.parent_sked_part.id %}"><strong>{{object.parent_sked_part.part_name}}</strong></a>.</p>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-body">
-      <h5 class="card-title">XPath</h5>
-      <p class="card-text">In the e-filed XML of this form, this field is found under:</p><p class="text-monospace">{{ object.xpath }}.</p>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-body">
-      <h5 class="card-title">Paper Form</h5>
-      <p class="card-text">On the paper form, this field can be found under <strong>{{ object.line_number }}</strong></p>
-    </div>
-  </div>
-</div>
-{% endcomment %}
 
 <div class="row">
   <div class="col-3">
@@ -41,25 +15,72 @@
       </a>
       <a href="#" class="list-group-item list-group-item-action flex-column align-items-start disabled">
         <div class="d-flex w-100 justify-content-between">
-          <h5 class="mb-1">Description</h5>
-          <!-- <small class="text-muted">3 days ago</small> -->
-        </div>
-        <p class="mb-1">{{ object.description }}</p>
-        <small class="text-muted">The IRS designates this field as <strong>{{ object.irs_type }}</strong>.</small>
-      </a>
-      <a href="#" class="list-group-item list-group-item-action flex-column align-items-start disabled">
-        <div class="d-flex w-100 justify-content-between">
           <h5 class="mb-1">Line Number</h5>
           <!-- <small class="text-muted">3 days ago</small> -->
         </div>
-        <p class="mb-1">On the paper form, this field can be found under <strong>{{ object.line_number }}</p>
-        <small class="text-muted">Donec id elit non mi porta.</small>
+        <p class="mb-1">On the paper form, this field can be found under <strong>{{ object.line_number }}</strong></p>
+        <!-- <small class="text-muted">Donec id elit non mi porta.</small> -->
+      </a>
+      <a href="#" class="list-group-item list-group-item-action flex-column align-items-start disabled">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1">Typing</h5>
+          <!-- <small class="text-muted">3 days ago</small> -->
+        </div>
+        <p class="mb-1">The IRS designates this field as <strong>{{ object.irs_type }}</strong>.</p>
+        <small class="text-muted">The database type for this field is <strong>{{ object.db_type }}</strong>.</small>
       </a>
     </div>
   </div>
   <div class="col-9">
     <h1 class="display-3">{{ object.db_name }}</h1>
-    <p class="lead">In the XML e-file of this form, this field can be found under XML path </p>
+    <p class="lead">{{ object.description }}</p>
+    <div class="container-length-rule"></div>
+    <br>
+    <!-- <h3><a href="#" data-toggle="tooltip" title data-original-title="This is the location in an efiled 990 XML in which this field can be found">XML Path</a></h4>
+    <p>{{ object.xpath }}</p>
+    <p> blah blah</p> -->
+
+    <table class="table table-bordered table-striped table-responsive table-hover">
+      <!-- <thead>
+        <tr>
+          <th scope="col">Line Number</th>
+          <th scope="col">Field Name</th>
+          <th scope="col">IRS Type</th>
+          <th scope="col">Description</th>
+          <th scope="col">Details</th>
+        </tr>
+      </thead> -->
+      <tbody>
+        <tr>
+          <th scope="row">
+            <a href="#" data-toggle="tooltip" title data-original-title="This is the location in an efiled 990 XML in which this field can be found">
+              XPath
+            </a>
+          </th>
+          <td>{{ object.xpath }}</td>
+        </tr>
+          <th scope="row">
+            <a href="#" data-toggle="tooltip" title data-original-title="These are the tax years and corresponding efile versions in which this field can be found">
+              Schema Versions
+            </a>
+          </th>
+          <td>{{ object.versions }}
+        <tr>
+          <th scope="row">
+            <a href="#" data-toggle="tooltip" title data-original-title="Grouped fields can appear multiple times in the efile XML and represent fields in tabular data">
+              Grouped Field
+            </a>
+          </th>
+          <td>{% ifequal object.in_a_group 1 %}True{% else %}False{% endifequal %}</td>
+        </tr>
+        <tr>
+          <th scope="row">
+            <a href="#" data-toggle="tooltip" title data-original-title="This represents the order in which this field is found within the efile XML">
+              Ordering
+          </th>
+          <td>{{ object.ordering|floatformat:"0" }}</td>
+      </tbody>
+    </table>
 
   </div>
 </div>
