@@ -3,13 +3,27 @@ from django.views.generic import ListView, DetailView
 from core.models import Schedule_Part_Metadata, FilingFiling, Schedule_Metadata, Field_Metadata
 
 # Create your views here.
-class SkedPartList(ListView):
+class DocListViewBase(ListView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['nav_app'] = 'docs'
+        return context
+
+
+class DocDetailViewBase(DetailView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['nav_app'] = 'docs'
+        return context
+
+
+class SkedPartList(DocListViewBase):
     # browse this page to advance to the SkedPartList
     # maybe use those expanding cards to group sked parts under sked here
     model = Schedule_Metadata
 
 
-class FieldsList(ListView):
+class FieldsList(DocListViewBase):
     # this view will take a URL parameter indicating the sked part for which it should show fields
     # display variables in table format
     def get_queryset(self):
@@ -23,7 +37,7 @@ class FieldsList(ListView):
         return context
 
 
-class FieldDetail(DetailView):
+class FieldDetail(DocDetailViewBase):
     # show varaible metadata
     # optional?
     # maybe show some extra fields not on the VariableList table

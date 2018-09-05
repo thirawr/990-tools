@@ -28,6 +28,19 @@
     <!-- <li class="nav-item">
       <a class="nav-link disabled" href="#">Disabled</a>
     </li> -->
-  </ul>
-</div>
+  <!-- </ul>
+</div> -->
 {% endblock nav %}
+
+{% block breadcrumb_nav_cont %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    {% block breadcrumb_nav %}
+    {% endblock breadcrumb_nav %}
+  </ol>
+</nav>
+{% endblock breadcrumb_nav_cont %}
+
+
+{% block content %}
+{% endblock content %}

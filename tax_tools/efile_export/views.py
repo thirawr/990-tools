@@ -54,7 +54,7 @@ def report_success(request):
             raise Http404
         else:
 
-            return render(request, 'efile_export/success.html')
+            return render(request, 'efile_export/success.html', {'nav_app': 'export'})
             # use session keys to build queryset
             # generate CSV (separate fnct)
             # stream CSV (separate fnct)
@@ -63,6 +63,11 @@ def report_success(request):
 
 class Home(TemplateView):
     template_name = 'efile_export/home.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['nav_app'] = 'export'
+        return context
 
 
 # def org_form(request):
@@ -94,7 +99,8 @@ class SimpleFormBase(View):
             'page_title': self.page_title,
             'action_url': self.action_url,
             'description_text': self.description_text,
-            'form': self.generate_form(request)
+            'form': self.generate_form(request),
+            'nav_app': 'export'
         }
 
     def get(self, request):
@@ -168,13 +174,17 @@ class OrgTypeForm(SimpleFormBase):
 
     def generate_context(self, request):
         forms = self.generate_form(request)
-        return {
-            'page_title': self.page_title,
-            'action_url': self.action_url,
-            'description_text': self.description_text,
-            'form': forms['type'],
-            'autocomp_form': forms['autocomp_form']
-        }
+        context = super().generate_context(request)
+        context['form'] = forms['type']
+        context['autocomp_form'] = forms['autocomp_form']
+        # return {
+        #     'page_title': self.page_title,
+        #     'action_url': self.action_url,
+        #     'description_text': self.description_text,
+        #     'form': forms['type'],
+        #     'autocomp_form': forms['autocomp_form']
+        # }
+        return context
 
     def generate_form(self, request):
         form = OrganizationTypeForm(request.POST or None)
@@ -271,7 +281,8 @@ def field_form(request):
             return HttpResponseRedirect(reverse_lazy('export-home'))
     else:
         fields_form_set = FieldsFormSetFactory(parent_sked_part_ids=sked_part_ids)
-    return render(request, 'efile_export/field_form.html', {'formset': fields_form_set})
+    context = {'formset': fields_form_set, 'nav_app': 'export'}
+    return render(request, 'efile_export/field_form.html', context)
 
 
 class OrgNameAutocomplete(autocomplete.Select2QuerySetView):

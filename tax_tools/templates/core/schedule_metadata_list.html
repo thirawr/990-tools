@@ -1,5 +1,9 @@
 {% extends 'core/base.html' %}
 
+{% block breadcrumb_nav %}
+<li class="breadcrumb-item active"><a href="#">Schedules</a></li>
+{% endblock breadcrumb_nav %}
+
 {% block content %}
 <div id='accordion'>
   {% for sked in object_list %}
