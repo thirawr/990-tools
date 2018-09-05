@@ -21,6 +21,7 @@ from core.views import SkedPartList, FieldDetail, FieldsList
 
 urlpatterns = [
     path('schedules/', SkedPartList.as_view(), name='reference-skeds'),
+    path('schedules/<int:sked_id>', SkedPartList.as_view(), name='reference-skeds'),
     path('sked-part/<int:sked_part_id>/', FieldsList.as_view(), name='reference-sked-part'),
     path('field/<int:pk>/', FieldDetail.as_view(), name='reference-field-detail')
 ]

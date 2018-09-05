@@ -1,49 +1,56 @@
 {% extends 'core/base.html' %}
 
 {% block breadcrumb_nav %}
-<li class="breadcrumb-item active"><a href="#">Schedules</a></li>
+<li class="breadcrumb-item {% if object_list|length > 1 %} active {% endif %}"><a href="{% if object_list|length > 1 %}#{% else %}{% url 'reference-skeds' %}{% endif %}">All Schedules</a></li>
+{% if object_list|length < 2 %}
+  <li class="breadcrumb-item active"><a href="#">{{ object_list.0 }}</a>
+{% endif %}
 {% endblock breadcrumb_nav %}
 
 {% block content %}
-<div id='accordion'>
-  {% for sked in object_list %}
-    <div class='card'>
-      <div class='card-header' id='headingOne'>
-        <h5 class='mb-0'>
-          <button type='button' class="btn btn-link" data-toggle="collapse" data-target="#collapse{{sked.id}}" aria-expanded="true" aria-controls="collapse{{sked.id}}">
-            {{ sked }}
-          </button>
-        </h5>
+  <div class="row">
+  {% if object_list|length == 1 and object_list.0.associated_forms.all %}
+    <div class="col-3">
+      <div class="list-group">
+        <a href="#" class="list-group-item list-group-item-action flex-column align-items-start disabled">
+          <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">Associated Forms</h5>
+          </div>
+          <p class="mb-1">The following forms are associated with this schedule:</p>
+        </a>
+        {% for form in object_list.0.associated_forms.all %}
+        <a href="{% url 'reference-skeds' form.id %}" class="list-group-item list-group-item-action">{{ form }}</a>
+        {% endfor %}
       </div>
-      <div id="collapse{{sked.id}}" class="collapse hide" aria-labelledby="headingOne" data-parent="#accordion">
-        <div class='card-body'>
-          <ul class="list-group list-group-flush">
-            {% for sked_part in sked.schedule_part_metadata_set.all %}
-              <li class="list-group-item">
-                <a href="{% url 'reference-sked-part' sked_part.id %}">
-                  {{ sked_part }}
-                </a>
-              </li>
-            {% endfor %}
-          </ul>
+    </div>
+  {% endif %}
+
+  <div class="col" id='accordion'>
+    {% for sked in object_list %}
+      <div class='card'>
+        <div class='card-header' id='headingOne'>
+          <h5 class='mb-0'>
+            <button type='button' class="btn btn-link" data-toggle="collapse" data-target="#collapse{{sked.id}}" aria-expanded="true" aria-controls="collapse{{sked.id}}">
+              {{ sked }}
+            </button>
+          </h5>
+        </div>
+        <div id="collapse{{sked.id}}" class="collapse hide" aria-labelledby="headingOne" data-parent="#accordion">
+          <div class='card-body'>
+            <ul class="list-group list-group-flush">
+              {% for sked_part in sked.schedule_part_metadata_set.all %}
+                <li class="list-group-item">
+                  <a href="{% url 'reference-sked-part' sked_part.id %}">
+                    {{ sked_part }}
+                  </a>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
         </div>
       </div>
-    </div>
-  {% endfor %}
+    {% endfor %}
+  </div>
 </div>
 
-
-
-{% comment %}
-  {% for sked in object_list %}
-  <h3>{{ sked }}</h3>
-    <div>
-      <ul>
-        {% for sked_part in sked.schedule_part_metadata_set.all %}
-          <li><a href='#'>{{ sked_part.part_name }}</a></li>
-        {% endfor %}
-      </ul>
-    </div>
-  {% endfor %}
-{% endcomment %}
 {% endblock content %}

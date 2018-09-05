@@ -1,41 +1,50 @@
 {% extends 'core/base.html' %}
 
 {% block breadcrumb_nav %}
-<li class="breadcrumb-item"><a href="#">Schedules</a></li>
-<li class="breadcrumb-item active"><a href="#">Fields</a></li>
-<li class="breadcrumb-item active"><a href="#">Detail</a></li>
+<li class="breadcrumb-item"><a href="{% url 'reference-skeds' %}">All Schedules</a></li>
+<li class="breadcrumb-item"><a href="{% url 'reference-skeds' object.parent_sked_id %}">{{ object.parent_sked }}</a></li>
+<li class="breadcrumb-item"><a href="{% url 'reference-sked-part' object.parent_sked_part_id %}">{{ object.parent_sked_part }}</a></li>
+<li class="breadcrumb-item active"><a href="#">{{ object.db_name }}</a></li>
 {% endblock breadcrumb_nav %}
 
 {% block content %}
 
 <div class="row">
   <div class="col-3">
-    <div class="list-group">
-      <a href="{% url 'reference-sked-part' object.parent_sked_part.id %}" class="list-group-item list-group-item-action flex-column align-items-start">
+    <ul class="list-group">
+      <li class="list-group-item list-group-item flex-column align-items-start">
         <div class="d-flex w-100 justify-content-between">
           <h5 class="mb-1">Parent Form</h5>
           <!-- <small>3 days ago</small> -->
         </div>
-        <p class="mb-1">This field is found on form <strong>{{ object.parent_sked.name }}</strong></p>
-        <small>{{ object.parent_sked_part.part_name }}</small>
-      </a>
-      <a href="#" class="list-group-item list-group-item-action flex-column align-items-start disabled">
+        <p class="mb-1">This field is found on form <strong><a href="{% url 'reference-skeds' object.parent_sked.id %}">{{ object.parent_sked.name }}</a></strong></p>
+        <small><a href="{% url 'reference-sked-part' object.parent_sked_part.id %}">{{ object.parent_sked_part.part_name }}</a></small>
+      </li>
+      <li class="list-group-item list-group-item flex-column align-items-start">
         <div class="d-flex w-100 justify-content-between">
           <h5 class="mb-1">Line Number</h5>
           <!-- <small class="text-muted">3 days ago</small> -->
         </div>
         <p class="mb-1">On the paper form, this field can be found under <strong>{{ object.line_number }}</strong></p>
         <!-- <small class="text-muted">Donec id elit non mi porta.</small> -->
-      </a>
-      <a href="#" class="list-group-item list-group-item-action flex-column align-items-start disabled">
+      </li>
+      <li class="list-group-item list-group-item flex-column align-items-start">
         <div class="d-flex w-100 justify-content-between">
           <h5 class="mb-1">Typing</h5>
           <!-- <small class="text-muted">3 days ago</small> -->
         </div>
         <p class="mb-1">The IRS designates this field as <strong>{{ object.irs_type }}</strong>.</p>
         <small class="text-muted">The database type for this field is <strong>{{ object.db_type }}</strong>.</small>
-      </a>
-    </div>
+      </li>
+      <li class="list-group-item list-group-item flex-column align-items-start">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1">Associated Schedules</h5>
+          <!-- <small class="text-muted">3 days ago</small> -->
+        </div>
+        <p class="mb-1">This schedule is associated with the following forms:</p>
+        <small class="text-muted">The database type for this field is <strong>{{ object.db_type }}</strong>.</small>
+      </li>
+    </ul>
   </div>
   <div class="col-9">
     <h1 class="display-3">{{ object.db_name }}</h1>

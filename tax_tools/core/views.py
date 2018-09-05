@@ -22,6 +22,17 @@ class SkedPartList(DocListViewBase):
     # maybe use those expanding cards to group sked parts under sked here
     model = Schedule_Metadata
 
+    def get_queryset(self):
+        if 'sked_id' in self.kwargs.keys():
+            return Schedule_Metadata.objects.filter(id=self.kwargs['sked_id'])
+        else:
+            return super().get_queryset()
+# class IndividualSkedPartList(DocListViewBase):
+#     model = Schedule_Metadata
+#
+#     def get_queryset(self):
+#         return Schedule_Metadata.objects.filter(id=self.request.sked_id)
+
 
 class FieldsList(DocListViewBase):
     # this view will take a URL parameter indicating the sked part for which it should show fields
