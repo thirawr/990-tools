@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
-from core.models import Organization, FilingFiling, Fiscal_Year
-from django.db import transaction
+from core.models import Organization, FilingFiling, Fiscal_Year, ReturnReturnheader990XPartI
+from django.db import connection
 
 # '''
 # kk so i dont think it's really all that necessary to \update\ these tables
@@ -50,8 +50,12 @@ class Command(BaseCommand):
                 GROUP BY `990s`.`filing_filing`.`ein`));
         '''
 
-        Organization.objects.raw('DELETE FROM core_organization;')
-        Organization.objects.raw(orgs_sql)
+        # Organization.objects.raw('DELETE FROM core_organization;')  # fiscalYear is set to cascade so this should delete bothm
+        Organization.objects.all().delete()
+        print('Orgs deleted')
+        cursor = connection.cursor()
+        cursor.execute(orgs_sql)
+        connection.commit()
         print('Orgs added')
 
         orgs = Organization.objects.all()
@@ -61,12 +65,21 @@ class Command(BaseCommand):
         fy_batch_num = 1
         fy_batch = []
 
-        Fiscal_Year.objects.all().delete()
+        # Fiscal_Year.objects.all().delete()
 
         for idx, org in enumerate(orgs):
             pct_completed = ((idx + 1) / float(num_orgs)) * 100
             print('Processing org {0} out of {1} ({2}%)...'.format(idx+1, num_orgs, pct_completed))
-            filings = FilingFiling.objects.filter(ein=org.ein)
+            potential_filings = FilingFiling.objects.filter(ein=org.ein)
+            filings = []
+            # now check whether each of these filings are in header, discard those that are not bc they likely are empty filings
+            for filing in potential_filings:
+                object_id = filing.object_id
+                num_rows = ReturnReturnheader990XPartI.objects.filter(object_id=object_id).count()
+                if num_rows > 0:
+                    filings.append(filing)
+                else:
+                    continue  # nothing to add - if it's not in the header it's probably not elsewhere
             fy_added = []
             for filing in filings:
                 fiscal_year = int(str(filing.tax_period)[:4])
