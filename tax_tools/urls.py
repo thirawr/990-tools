@@ -17,12 +17,15 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include
 from efile_export import urls as export_urls
+from efile_export.views import OrgSearch
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('efile_export.urls')),
     path('export/', include('efile_export.urls')),
     path('reference/', include('core.urls')),
+    # path('search/', include('haystack.urls')),
+    path('search/', OrgSearch.as_view(), name='org_search_view'),
 ]
 
 if settings.DEBUG:

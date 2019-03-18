@@ -1,0 +1,3 @@
+{{ object.taxpayer_name }}
+{{ object.return_type }}
+{{ object.fiscal_year_set.all }}

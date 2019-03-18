@@ -10,6 +10,7 @@ from django.shortcuts import redirect
 from django.forms import formset_factory
 from django.views import View
 from django.db.models import Q
+from haystack.generic_views import SearchView
 from efile_export.generate_report import generate_report, get_return_type_label
 from efile_export.forms import (OrganizationForm, FieldsForm, FieldsFormSet,
                                 OrganizationTypeForm, SchedulePartsForm,
@@ -283,6 +284,29 @@ def field_form(request):
         fields_form_set = FieldsFormSetFactory(parent_sked_part_ids=sked_part_ids)
     context = {'formset': fields_form_set, 'nav_app': 'export'}
     return render(request, 'efile_export/field_form.html', context)
+
+
+
+class OrgSearch(SearchView):
+    def get_queryset(self):
+        queryset = super(OrgSearch, self).get_queryset()
+        return_type_coded = self.request.session['return_type']
+        fiscal_years = self.request.session['year']
+        # print(fiscal_years)
+        # print(return_type_coded)
+        return_type_list = get_return_type_label(return_type_coded)
+        q_filters = Q()
+        for fy in fiscal_years:
+            q_filters = q_filters | Q(fiscal_year__fiscal_year=fy)
+        # qs = queryset.filter(q_filters, return_type__in=return_type_list)
+        qs = queryset.filter(q_filters)
+        # filtering
+        return qs.all()
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(OrgSearch, self).get_context_data(*args, **kwargs)
+        # do something
+        return context
 
 
 class OrgNameAutocomplete(autocomplete.Select2QuerySetView):
