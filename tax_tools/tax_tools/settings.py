@@ -39,6 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Added
+    'haystack',
+    'elasticsearch',
+    # Apps
     'core',
     'efile_export',
     # debug
@@ -121,3 +125,13 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 # Sessions
 SESSION_ENGINE = "django.contrib.sessions.backends.db"
+
+
+# Haystack config
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+        'URL': 'http://127.0.0.1:9200/',
+        'INDEX_NAME': 'orgs',
+    },
+}
