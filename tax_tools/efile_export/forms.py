@@ -3,7 +3,7 @@ from django import forms
 from django.forms.formsets import BaseFormSet
 from django.db.models import Q
 from dal import autocomplete
-from core.models import Field_Metadata, Schedule_Part_Metadata, FilingFiling, Organization, Schedule_Metadata
+from core.models import Field_Metadata, Schedule_Part_Metadata, FilingFiling, Organization, Schedule_Metadata, Fiscal_Year
 
 class OrganizationForm(forms.ModelForm):
     # queryset = FilingFiling.objects.distinct('ein')
@@ -143,12 +143,11 @@ class SchedulePartsFormSet(BaseFormSet):
 
 
 class FiscalYearForm(forms.Form):
-    qs = FilingFiling.objects.values_list('tax_period', flat=True).distinct()
+    # qs = FilingFiling.objects.values_list('tax_period', flat=True).distinct()
+    qs = Fiscal_Year.objects.values_list('fiscal_year', flat=True).distinct()
     yr_map = {}
 
-    for prd in qs:
-        fiscal_year = str(prd)[:4]
-        fiscal_year = int(fiscal_year)
+    for fiscal_year in qs:
         if fiscal_year not in yr_map.keys():
             yr_map[fiscal_year] = fiscal_year
 
