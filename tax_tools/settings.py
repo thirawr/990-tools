@@ -21,9 +21,9 @@ XML_METADATA_DIR = os.path.join(BASE_DIR, '990-xml-metadata')
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['.herokuapp.com', '0.0.0.0']
 
-INTERNAL_IPS = ['127.0.0.1']
+# INTERNAL_IPS = []
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
