@@ -1,1 +1,1 @@
-web: gunicorn tax_tools.wsgi
+web: gunicorn tax_tools.wsgi --log-level debug
