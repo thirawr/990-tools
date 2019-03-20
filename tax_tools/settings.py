@@ -15,8 +15,8 @@ from .private import *
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-REPO_ROOT_DIR = os.path.dirname(BASE_DIR)
-XML_METADATA_DIR = os.path.join(REPO_ROOT_DIR, '990-xml-metadata')
+# REPO_ROOT_DIR = os.path.dirname(BASE_DIR)
+XML_METADATA_DIR = os.path.join(BASE_DIR, '990-xml-metadata')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
@@ -117,7 +117,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATICFILES_DIRS = [STATIC_ROOT]
+STATICFILES_DIRS = []
 
 
 # Sessions
