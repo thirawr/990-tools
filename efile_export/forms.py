@@ -158,7 +158,7 @@ class FiscalYearForm(forms.Form):
 
     choices = sorted(choices, key=lambda x: x[1])
 
-    print(choices)
+    # print(choices)
 
     year = forms.MultipleChoiceField(
         choices=choices,
