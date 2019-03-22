@@ -26,7 +26,7 @@ ALLOWED_HOSTS = ['.herokuapp.com', '0.0.0.0']
 # INTERNAL_IPS = []
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 # Application definition
 
