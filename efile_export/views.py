@@ -323,7 +323,7 @@ class OrgNameAutocomplete(autocomplete.Select2QuerySetView):
         qs = Organization.objects.filter(q_filters, return_type__in=return_type_list)
 
         if self.q:
-            return qs.filter(taxpayer_name__istartswith=self.q)
+            return qs.filter(taxpayer_name__icontains=self.q)
         else:
             return qs
 
