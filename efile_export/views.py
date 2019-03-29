@@ -168,7 +168,7 @@ class OrgTypeForm(SimpleFormBase):
     page_title = 'Organization Type'
     template_path = 'efile_export/type_form.html'
     action_url = 'type-form'
-    description_text = "Select the organization type below. Not sure which 990 your organizations file? Look it up in the search box at the bottom of this page."
+    description_text = "Select the organization type below. Not sure which 990 your organizations file? Search it <a href='https://apps.irs.gov/app/eos/' target='_blank'>here</a>."
     next_page_url = 'fy-form'
     session_key = 'return_type'
     cleaned_data_key = session_key
