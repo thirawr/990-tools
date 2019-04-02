@@ -2,7 +2,10 @@
 
 {% block content %}
 <h1 class="display-3">{{ page_title }}</h1>
-<p class="lead">{{ description_text|safe }}</p>
+<p class="lead">
+  {{ description_text|safe }}
+  For more details on the schedules, their parts, and the fields within, check our <a href="{% url 'reference-skeds' %}" target="_blank"> documentation.</a>
+</p>
   <div id='accordion'>
     {% if form.non_field_errors %}
     <div class="alert alert-warning" role="warning">

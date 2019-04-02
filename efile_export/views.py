@@ -218,7 +218,12 @@ class SkedPartsForm(SimpleFormBase):
     page_title = 'Schedule Parts'
     template_path = 'efile_export/sked_parts_form.html'
     action_url = 'sked-parts-form'
-    description_text = 'tktktk'
+    description_text = """Click the text in any of the boxes below to expand
+                          the schedule into its constituent parts, then check
+                          the box for as many or as few schedule parts as you
+                          would like to include in your report. You may include
+                          schedule parts from multiple different schedules.
+                          """
     next_page_url = 'report-success'
     session_key = 'schedule_parts'
     cleaned_data_key = session_key
