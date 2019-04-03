@@ -11,22 +11,21 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
-from .private import *
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # REPO_ROOT_DIR = os.path.dirname(BASE_DIR)
 XML_METADATA_DIR = os.path.join(BASE_DIR, '990-xml-metadata')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
-ALLOWED_HOSTS = ['.herokuapp.com', '0.0.0.0']
+ALLOWED_HOSTS = []
 
 # INTERNAL_IPS = []
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 # Application definition
 
@@ -45,8 +44,6 @@ INSTALLED_APPS = [
     # Apps
     'core',
     'efile_export',
-    # debug
-    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
