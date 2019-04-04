@@ -71,12 +71,12 @@ def get_object_ids(eins, fiscal_years):
 
     # print(fiscal_years)
     for fy in fiscal_years:
-        print(fy)
-        print(type(eins))
+        # print(fy)
+        # print(type(eins))
         for ein in eins:
-            print('ein:', ein)
+            # print('ein:', ein)
             possible_filings = FilingFiling.objects.filter(tax_period__startswith=fy, ein=ein)
-            print('pf: ', possible_filings)
+            # print('pf: ', possible_filings)
             if not possible_filings:
                 continue  # nothing here, continue on
             elif len(possible_filings) > 1:
@@ -154,7 +154,7 @@ def generate_report(request):
     # generate report obj here
     # @TODO: add report fields to form
 
-    print(request.session.keys())
+    # print(request.session.keys())
     # print(request.session['year'])
     sked_part_ids = request.session.get('schedule_parts', None)
     if not sked_part_ids:
@@ -186,12 +186,12 @@ def generate_report(request):
 
     eins = get_eins_from_org_ids(org_ids)
     fy_object_id_map = get_object_ids(eins, yrs)
-    print('fy_object_id_map: ', fy_object_id_map)
+    # print('fy_object_id_map: ', fy_object_id_map)
 
     object_ids = []
     for object_id_list in fy_object_id_map.values():
         object_ids += object_id_list
-    print('object_ids: ', object_ids)
+    # print('object_ids: ', object_ids)
 
     model_name_rows_map = {}
     for db_table_name in model_name_field_meta_map.keys():
@@ -209,7 +209,7 @@ def generate_report(request):
     # print(sked_part_rows_map)
 
     files = generate_csv_files(model_name_rows_map, model_name_field_meta_map)
-    print('files: ', files)
+    # print('files: ', files)
 
     archive = io.BytesIO()
     with zipfile.ZipFile(archive, 'w') as f:

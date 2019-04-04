@@ -4,5 +4,4 @@ from tax_tools.settings.private import *
 DEBUG = False
 TEMPLATE_DEBUG = False
 ALLOWED_HOSTS = ['.herokuapp.com', '0.0.0.0']
-# print(ALLOWED_HOSTS)
 INSTALLED_APPS += ()

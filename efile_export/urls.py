@@ -17,8 +17,7 @@ from django.contrib import admin
 from django.urls import path
 from efile_export.views import (Home, OrgNameAutocomplete, field_form, OrgForm,
                                OrgTypeForm, SkedPartsForm, FYForm,
-                               get_org_return_type, report_success,
-                               stream_report)
+                               report_success, stream_report)
 
 urlpatterns = [
     path('', Home.as_view(), name='export-home'),
@@ -30,5 +29,4 @@ urlpatterns = [
     path('success', report_success, name='report-success'),
     path('stream_report', stream_report, name='stream_report'),
     path('org-autocomplete/', OrgNameAutocomplete.as_view(), name='org-autocomplete'),
-    path('org-type-lookup/', get_org_return_type, name='get-org-type')
 ]

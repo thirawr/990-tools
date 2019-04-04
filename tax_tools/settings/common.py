@@ -149,7 +149,7 @@ LOGGING = {
         'logfile': {
             'level':'DEBUG',
             'class':'logging.handlers.RotatingFileHandler',
-            'filename': BASE_DIR + "/logfile",
+            'filename': BASE_DIR + "/logs/django_log.log",
             'maxBytes': 50000,
             'backupCount': 2,
             'formatter': 'standard',
@@ -168,16 +168,16 @@ LOGGING = {
         },
         'django.db.backends': {
             'handlers': ['console', 'logfile'],
-            'level': 'DEBUG',
+            'level': 'WARN',
             'propagate': False,
         },
         'core': {
             'handlers': ['console', 'logfile'],
-            'level': 'DEBUG',
+            'level': 'WARN',
         },
         'efile_export': {
             'handlers': ['console', 'logfile'],
-            'level': 'DEBUG',
+            'level': 'WARN',
         }
     }
 }
