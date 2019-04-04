@@ -1,6 +1,9 @@
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import ListView, DetailView
 from core.models import Schedule_Part_Metadata, FilingFiling, Schedule_Metadata, Field_Metadata
+import logging
+
+log = logging.getLogger(__name__)
 
 # Create your views here.
 class DocListViewBase(ListView):

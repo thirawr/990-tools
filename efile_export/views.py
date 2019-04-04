@@ -1,5 +1,6 @@
 import json
 import csv
+import logging
 from django.shortcuts import render
 from dal import autocomplete
 from core.models import Organization, Schedule_Part_Metadata, FilingFiling, Schedule_Metadata
@@ -30,6 +31,7 @@ SESSION_KEYS = {
 # class ReportSuccess(TemplateView):
 #     template_name = 'efile_export/success.html'
 
+log = logging.getLogger(__name__)
 
 def stream_report(request):
     archive = generate_report(request)
