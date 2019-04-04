@@ -6,10 +6,7 @@ From project root:
 ```sh
 pip install -r requirements.txt
 ```
-2. Migrate database models
-```sh
-./bin/migrate.sh
-```
+2. Configure database credentials in tax_tools.settings.private.py
 3. Collect static files
 ```sh
 python manage.py collectstatic
